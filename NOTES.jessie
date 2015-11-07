@@ -28,9 +28,9 @@ MAX_PRISONER_UGID.
 Default values for MIN_PRISONER_UGID and MAX_PRISONER_UGID is 10000
 and 20000 respecively.
 
-* TODO [/]
-- [ ] make sure binaries are installed in to /usr/local/sbin
-- [ ] create and populate /usr/local/var/vpl-jail-system/etc folder
+* TODO [2/5]
+- [X] make sure binaries are installed in to /usr/local/sbin
+- [X] create and populate /usr/local/var/vpl-jail-system/etc folder
   (needs properly populated passwd and group files).
 - [ ] modify startup script to properly build /jail filesystem
 - [ ] create and populate /usr/local/var/vpl-jail-system/home folder
