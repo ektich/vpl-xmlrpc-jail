@@ -106,7 +106,7 @@ fi
 echo "Checking installed software"
 ./configure >>$LOGFILE
 echo "Compiling vpl-jail-server"
-make >>$LOGFILE
+make && make install >>$LOGFILE
 VPLJAIL_INSTALL_DIR=/etc/vpl
 if [ -d $VPLJAIL_INSTALL_DIR ] ; then
     echo "Updating installation => $VPLJAIL_INSTALL_DIR"
@@ -117,7 +117,7 @@ else
     mkdir $VPLJAIL_INSTALL_DIR
 fi
 #Copy daemon 
-cp src/vpl-jail-server $VPLJAIL_INSTALL_DIR
+#cp src/vpl-jail-server $VPLJAIL_INSTALL_DIR
 #Copy configuration file
 cp -i vpl-jail-system.conf $VPLJAIL_INSTALL_DIR
 chmod 600 $VPLJAIL_INSTALL_DIR/vpl-jail-system.conf
