@@ -15,7 +15,7 @@ mount necessary bits and pieces using overlayfs. overlayfs was added
 to the kernel 3.18.0. Jessie still uses 3.16.0. AuFS can be used to
 stack up filesystems
 
-mount -t aufs br:template_etc=ro:/etc=ro none /jail/etc 
+mount -t aufs -o br:template_etc=ro:/etc=ro none /jail/etc 
 
 with the above command executed, files within template_etc will hide
 the files with the same names from the actual /etc directory
@@ -28,6 +28,33 @@ MAX_PRISONER_UGID.
 Default values for MIN_PRISONER_UGID and MAX_PRISONER_UGID is 10000
 and 20000 respecively.
 
+* /jail directory structure
+original vpl-jail-system-initd script creates the /jail file system of
+a following structure:
+#+BEGIN_EXAMPLE
+$JAILPATH____ dev   #fake with minimum files
+        |     |___ pts #Replicate original
+        |___ etc   #fake with own passwd and group
+        |     |___ subdirs  #Replicate readonly dir by mount --bind
+        |          except
+        |___ home  #dir to create apropiate prisoner home dir
+        |___ tmp   #tmp of jail filesystem 
+        |___ proc  #Real dir by mount --bind
+        |___ usr   #Replicate readonly dir by mount --bind
+        |___ bin   #Replicate readonly dir by mount --bind
+        |___ lib   #Replicate readonly dir by mount --bind
+        |___ lib64 #Replicate readonly dir by mount --bind
+        |___ var   #dir for replicate subdirs
+                |___ lib       #Replicate readonly dir by mount --bind 
+#+END_EXAMPLE
+The /etc directory contains replacement passwd and group files,
+the /home directory is empty (looks like the worker itself creates
+home directories when needed)
+The var itself is empty (initially) but the lib is mounted "from
+outside".
+The dev is populated with a minimum set of files, but /dev/pts is
+mounted from the outside.
+
 * TODO [2/5]
 - [X] make sure binaries are installed in to /usr/local/sbin
 - [X] create and populate /usr/local/var/vpl-jail-system/etc folder
@@ -37,3 +64,9 @@ and 20000 respecively.
    (pre-create all home direcotires)
 - [ ] when layering /home directory use tmpfs as "write" storage 
    (make sure swap is big enough to do so) 
+
+* vpl-jail-server hard-coded checks and paths
+- $JAILPATH/etc/passwd should be owned by 0:0 and should have mode 644
+- $JAILPATH/etc/shadow should be owned by 0:0 and should have mode 600
+- it will look for the SSL certificate in /etc/vpl/cert.pem and for
+  the private key in /etc/vpl/key.pem

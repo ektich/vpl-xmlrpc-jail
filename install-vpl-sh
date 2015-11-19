@@ -131,21 +131,24 @@ chmod +x /etc/init.d/vpl-jail-system
 if [ ! -d /var/vpl-jail-system ] ; then
 	mkdir /var/vpl-jail-system
 fi
-chmod 0600 /var/vpl-jail-system
+chmod 0600 /var/vpl-jail-system #should't this be 0700 ?
 # generate file system used to create stack
 # should this be dist-specific?
 # definitely should be part of ./configure+install proces
-VPL_OVERLAY_ETC=/usr/local/var/vpl-jail-system/etc
-mkdir -p $VPL_OVERLAY_ETC
-chown root:root $VPL_OVERLAY_ETC
-chmod 755 $VPL_OVERLAY_ETC
-echo "root:*:0:0:root:/root:/bin/bash" > $VPL_OVERLAY_ETC/passwd
-echo "root:*:0:root" > $VPL_OVERLAY_ETC/group
+VPL_OVERLAY=/usr/local/var/vpl-jail-system
+mkdir -p $VPL_OVERLAY/etc
+chown root:root $VPL_OVERLAY/etc
+chmod 755 $VPL_OVERLAY/etc
+echo "root:*:0:0:root:/root:/bin/bash" > $VPL_OVERLAY/etc/passwd
+echo "root:*:0:root" > $VPL_OVERLAY/etc/group
 for ((i=10000;i<50001;i++)); do
-    echo "p$i:*:$i:$i:prisoner $i:/home/p$i:/bin/bash" >> $VPL_OVERLAY_ETC/passwd
-    echo "p$i:*:$i:" >> $VPL_OVERLAY_ETC/group
+    echo "p$i:*:$i:$i:prisoner $i:/home/p$i:/bin/bash" >> $VPL_OVERLAY/etc/passwd
+    echo "p$i:*:$i:" >> $VPL_OVERLAY/etc/group
 done
-
+# hiding /etc/shadow file (otherwise autofs will show it)
+# permissions and ownership are hard-coded in the vpl-jail-server.h and checked against
+touch $VPL_OVERLAY/etc/shadow
+chown root:root $VPL_OVERLAY/etc/shadow
 
 if [ ! -f $VPLJAIL_INSTALL_DIR/cert.pem ] ; then
 	echo "VPL execution server needs SSL certificates to accept https:"
